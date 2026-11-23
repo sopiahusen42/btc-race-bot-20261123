@@ -9,21 +9,35 @@
 // State machine:
 //   flat                 -> buy the whole cash balance, then `long`
 //   long                 -> track the running peak close; if the close drops
-//                           more than 8% below the peak, sell everything and
+//                           more than 20% below the peak, sell everything and
 //                           remember that peak as the reclaim level
 //   waiting-for-reclaim  -> re-enter (buy all cash) only once the close is back
 //                           at the level that stopped us out; no small bounces
 //
-// All decisions use integer price comparisons (price * 100 < peak * 92 for the
-// 8% stop), so nothing in the decision path depends on floating point.
+// Why 20% and not a tighter stop. The race window is scored on net PnL and the
+// ten highest net PnLs are paid whatever their sign, so the dev gate is the
+// only hard requirement. The one thing that can disqualify us outright is the
+// guardrail: maximum drawdown on the race window must be 25% or less, or the
+// entry ranks below every entry that meets the bar. An 8% stop is the worst of
+// both worlds: it fires on an ordinary intraday dip, sells at the bottom, and
+// only buys back once price has reclaimed the old peak — so it converts a dip
+// that would have recovered into a permanent loss of roughly the dip's size. A
+// 20% stop only fires in genuinely extreme conditions, still keeps the maximum
+// drawdown (about 20.5% including slippage on the exit) inside the 25%
+// guardrail, and therefore costs nothing on a normal day while still capping a
+// crash. The stop exists for the guardrail, not for profit: it is the floor
+// under a bad window, not an edge.
+//
+// All decisions use integer price comparisons (price * 100 < peak * 80 for the
+// 20% stop), so nothing in the decision path depends on floating point.
 
 import { runBars, type BarsState, type BuyInput, type SellInput } from './vendor/makefun-bars.ts';
 
 const SYMBOL = 'CBBTC';
 /** Wide enough for the modelled slippage plus the one-bar gap; not a decision input. */
 const MAX_SLIPPAGE_BPS = 300;
-/** Stop when close * 100 < peak * 92, i.e. an 8% fall from the running peak. */
-const STOP_NUM = 92n;
+/** Stop when close * 100 < peak * 80, i.e. a 20% fall from the running peak. */
+const STOP_NUM = 80n;
 const STOP_DEN = 100n;
 
 type Phase = 'flat' | 'long' | 'waiting-for-reclaim';
@@ -31,7 +45,7 @@ type Phase = 'flat' | 'long' | 'waiting-for-reclaim';
 let phase: Phase = 'flat';
 /** Running maximum close seen while long, in price units. */
 let peak = 0n;
-/** The peak whose 8% drop stopped us out; the close must reclaim it to re-enter. */
+/** The peak whose 20% drop stopped us out; the close must reclaim it to re-enter. */
 let reclaimLevel = 0n;
 /**
  * True while an order of ours is decided but not yet filled. Orders fill at the
@@ -109,7 +123,7 @@ await runBars({
     }
 
     // waiting-for-reclaim: re-enter only on a full recovery of the stop level,
-    // so an 8% dip that bounces a few bps does not buy us back in.
+    // so a 20% dip that bounces a few bps does not buy us back in.
     if (held > 0n) return [];
     if (close < reclaimLevel) return [];
     const budget = spendable(state);
