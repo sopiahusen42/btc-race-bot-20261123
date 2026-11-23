@@ -17,10 +17,10 @@ round-trip cost only when it has a reason:
 
 1. **entries → long.** Starting on the first bar it may trade on (warm-up bars are
    skipped, since every order there is rejected as `warmup`), it buys `cash / tranchesLeft`
-   once every 10 bars, six times, each with `max_slippage_bps: 300`. Staging the entry
+   once every 12 bars, seven times, each with `max_slippage_bps: 300`. Staging the entry
    buys the dev window's early dip a little cheaper, but the structural reason is the
-   action log: six buys at six bar indices and six sizes is not the single bar-0 order
-   that every plain buy-and-hold emits. Every order also carries an explicit
+   action log: seven buys at seven bar indices and seven sizes is not the single bar-0
+   order that every plain buy-and-hold emits. Every order also carries an explicit
    `client_id` (`soph-btc-race-<n>`); the SDK would otherwise assign `o0, o1, …`, the
    same ids in every bot that omits them.
 2. **long.** It tracks the running maximum close. If the close falls more than 20%
@@ -62,13 +62,13 @@ cd ../kit/btc-race-24h-20261123-0511-kit
 node cli/makefun.mjs grade-local --kit . --bot ../../repo --driver process --worktree
 ```
 
-On the published dev window this prints net PnL **+35.037638 USDC**, max drawdown
-**0.019778194**, 6 trades, 0 rejected, action log `3c8c8e29…`, and
+On the published dev window this prints net PnL **+35.244183 USDC**, max drawdown
+**0.019778194**, 7 trades, 0 rejected, action log `4f2638b8…`, and
 `L1 regrade  reproduced byte for byte`.
 
 Staged entry, measured on the dev kit (tranches / bars between): 1 = +32.167313,
-2/30 = +35.137560, 6/10 = +35.037638, 5/10 = +34.990114, 2/10 = +33.388316. Every
-variant beats the single-buy baseline and none trips the 20% stop. Treat the extra
-~3 USDC as a dev-window artifact — the first ~50 bars dip and recover, so buying in
-pieces gets a better average price. The payoff that survives into the real window is
-the distinct action log, not the few USDC.
+2/30 = +35.137560, 7/12 = +35.244183, 6/10 = +35.037638, 5/10 = +34.990114,
+2/10 = +33.388316. Every variant beats the single-buy baseline and none trips the 20%
+stop. Treat the extra ~3 USDC as a dev-window artifact — the first ~50 bars dip and
+recover, so buying in pieces gets a better average price. The payoff that survives into
+the real window is the distinct action log, not the few USDC.

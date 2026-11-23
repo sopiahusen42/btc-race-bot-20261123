@@ -13,10 +13,10 @@
 // 1. It stages the entry over TRANCHES buys GAP_BARS apart instead of spending the
 //    whole balance on the first bar. On the dev window that is worth a little (the
 //    first ~50 bars dip and recover), but the reason to keep it is structural: the
-//    entry becomes a schedule of six orders at six different bar indices and six
-//    different notionals, not one order. A bot that emits the same canonical action
-//    log as an earlier entry from another account keeps its rank but takes no prize
-//    (RULES.txt:102), and "the same log" is compared on order side, symbol,
+//    entry becomes a schedule of seven orders at seven different bar indices and
+//    seven different notionals, not one order. A bot that emits the same canonical
+//    action log as an earlier entry from another account keeps its rank but takes
+//    no prize (RULES.txt:102), and "the same log" is compared on order side, symbol,
 //    client_id, max_slippage_bps and amount across every one of the 1,440 replies.
 //    Staggering the bar indices moves those bytes on economics rather than a label.
 //
@@ -28,8 +28,8 @@
 //    exactly nothing.
 //
 // State machine:
-//   entries              -> buy cash/tranchesLeft once every GAP_BARS until
-//                           TRANCHES buys are out, then `long`
+//   entries              -> buy cash/tranchesLeft once every GAP_BARS = 12 bars
+//                           until TRANCHES = 7 buys are out, then `long`
 //   long                 -> track the running peak close; if the close drops more
 //                           than 20% below the peak, sell everything and remember
 //                           that peak as the reclaim level
@@ -59,8 +59,8 @@ const MAX_SLIPPAGE_BPS = 300;
 const STOP_NUM = 80n;
 const STOP_DEN = 100n;
 /** Buys the entry is spread over, and the bars between them. */
-const TRANCHES = 6;
-const GAP_BARS = 10;
+const TRANCHES = 7;
+const GAP_BARS = 12;
 
 type Phase = 'entries' | 'long' | 'waiting-for-reclaim';
 
