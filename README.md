@@ -4,9 +4,9 @@ A bot for the make.fun "race a BTC trading bot live for 24 hours" bounty. It spe
 `agent-fun/bars-replay/v1` on stdin/stdout: one `reply` per `batch`, 1,440 one-minute
 cbBTC/USDC bars, starting with 1,000 USDC of paper money.
 
-[![make.fun · btc-race-24h-20261123-0511](https://make.fun/badge/btc-race-24h-20261123-0511.svg)](https://make.fun/bounty/btc-race-24h-20261123-0511)
-[![rank](https://make.fun/badge/btc-race-24h-20261123-0511/{owner}/{repo}/rank.svg)](https://make.fun/bounty/btc-race-24h-20261123-0511/leaderboard)
-[![reward](https://make.fun/badge/btc-race-24h-20261123-0511/{owner}/{repo}/reward.svg)](https://make.fun/bounty/btc-race-24h-20261123-0511)
+[![make.fun · btc-race-24h-20261123-0511](https://make.fun/badge/btc-race-24h-20261123-0511.svg)](https://make.fun/bounty/btc-race-24h-20261123-0511?utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261123-0511)
+[![rank](https://make.fun/badge/btc-race-24h-20261123-0511/sopiahusen42/btc-race-bot-20261123/rank.svg)](https://make.fun/bounty/btc-race-24h-20261123-0511/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261123-0511)
+[![reward](https://make.fun/badge/btc-race-24h-20261123-0511/sopiahusen42/btc-race-bot-20261123/reward.svg)](https://make.fun/bounty/btc-race-24h-20261123-0511?utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261123-0511)
 
 ## What it does
 
